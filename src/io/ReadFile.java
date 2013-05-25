@@ -14,6 +14,7 @@ public class ReadFile {
 	  try {
 		  FileSystem fs = FileSystem.get(new Configuration());
 		  fs.create(newfile, overwrite);
+		  fs.close();
 	  } catch (Exception e) {
 		  
 	  }
@@ -30,7 +31,7 @@ public class ReadFile {
       StringBuilder sb = new StringBuilder();
       while ((line = br.readLine()) != null) {
         sb.append(line);
-        sb.append("\n");
+        //sb.append("\n");
       }
       desc = sb.toString();
       in.close();
@@ -43,12 +44,15 @@ public class ReadFile {
   public void writefunc(String str, Path outFile) {
 	  try {
 		  FileSystem fs = FileSystem.get(new Configuration());
-		  FSDataOutputStream out = fs.create(outFile, true);
+		  FSDataOutputStream out = fs.append(outFile);
+		  System.out.println("FSDataOutputStream create ok...");
 		  BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(out));
+		  System.out.println("create buffer succeed...");
 		  bw.write(str);
 		  bw.close();
+		  out.close();
 	  } catch (Exception e) {
-		  System.out.println("Write Error!");
+		  e.printStackTrace();
 	  }
   }
   
