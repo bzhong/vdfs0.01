@@ -10,6 +10,16 @@ public class ReadFile {
     
   }
   
+  public boolean createfunc(Path newfile, boolean overwrite) {
+	  try {
+		  FileSystem fs = FileSystem.get(new Configuration());
+		  fs.create(newfile, overwrite);
+	  } catch (Exception e) {
+		  
+	  }
+	  return true;
+  }
+  
   public String readfunc(Path inFile) {
     String desc = new String();
     try {
@@ -25,15 +35,38 @@ public class ReadFile {
       desc = sb.toString();
       in.close();
     } catch (Exception e) {
-      System.out.println("Error!");
+      System.out.println("Read Error!");
     }
     return desc;
   }
   
-  public static void main(String[] args) throws IOException {
+  public void writefunc(String str, Path outFile) {
+	  try {
+		  FileSystem fs = FileSystem.get(new Configuration());
+		  FSDataOutputStream out = fs.create(outFile, true);
+		  BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(out));
+		  bw.write(str);
+		  bw.close();
+	  } catch (Exception e) {
+		  System.out.println("Write Error!");
+	  }
+  }
+  
+  public boolean deletefunc(Path delFile) {
+	  try {
+		  FileSystem fs = FileSystem.get(new Configuration());
+		  fs.delete(delFile, false);
+	  } catch (Exception e) {
+		  
+	  }
+	  return true;
+  }
+  
+  /*public static void main(String[] args) throws IOException {
     String myString = new String();
     ReadFile myRead = new ReadFile();
     myString = myRead.readfunc(new Path(args[0]));
     System.out.print(myString);
-  }
+    System.out.print("");
+  }*/
 }
