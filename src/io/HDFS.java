@@ -5,12 +5,12 @@ import org.apache.hadoop.conf.*;
 import java.io.*;
 
 
-public class ReadFile {
-  public ReadFile() {
+public class HDFS {
+  public HDFS() {
     
   }
   
-  public boolean createfunc(Path newfile, boolean overwrite) {
+  public boolean create(Path newfile, boolean overwrite) {
 	  try {
 		  FileSystem fs = FileSystem.get(new Configuration());
 		  fs.create(newfile, overwrite);
@@ -21,7 +21,7 @@ public class ReadFile {
 	  return true;
   }
   
-  public String readfunc(Path inFile) {
+  public String read(Path inFile) {
     String desc = new String();
     try {
       FileSystem fs = FileSystem.get(new Configuration());
@@ -41,7 +41,7 @@ public class ReadFile {
     return desc;
   }
   
-  public void writefunc(String str, Path outFile) {
+  public void write(String str, Path outFile) {
 	  try {
 		  FileSystem fs = FileSystem.get(new Configuration());
 		  FSDataOutputStream out = fs.append(outFile);
@@ -56,7 +56,7 @@ public class ReadFile {
 	  }
   }
   
-  public boolean deletefunc(Path delFile) {
+  public boolean delete(Path delFile) {
 	  try {
 		  FileSystem fs = FileSystem.get(new Configuration());
 		  fs.delete(delFile, false);
