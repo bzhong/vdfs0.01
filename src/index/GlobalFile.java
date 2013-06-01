@@ -1,16 +1,17 @@
 package index;
 
 import org.apache.hadoop.fs.*;
+import java.io.Serializable;
 
-public class File {
+public class GlobalFile {
     int globalNum;
     int storageType;
-    String filepath; 
+    public String filePath; 
     
-    public File (int num, int type, String path) {
-        globalNum = num;
-        storageType = type;
-        filepath = new String(path);
+    public GlobalFile (int num, int type, String path) {
+        this.globalNum = num;
+        this.storageType = type;
+        this.filePath = new String(path);
     }
     
     public int getGlobalNum() {
@@ -22,6 +23,6 @@ public class File {
     }
     
     public Path getFilePath() {
-        return new Path(filepath);
+        return new Path(filePath);
     }
 }

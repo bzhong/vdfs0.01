@@ -1,11 +1,11 @@
 package init;
 
-public class confInfo {
+public class ConfInfo {
     String confDir; //directory where conf files lie
     String dataDir; //directory where metadata and data lie
     
-    public confInfo (String dir) {
-        confDir = dir;
+    public ConfInfo (String dir) {
+        this.confDir = dir;
     }
     
     public String findDataDir() {
@@ -20,7 +20,7 @@ public class confInfo {
     }
     
     public static void main (String[] args) {
-        confInfo cInfo = new confInfo(args[0]);
+        ConfInfo cInfo = new ConfInfo(args[0]);
         
     }
 }
