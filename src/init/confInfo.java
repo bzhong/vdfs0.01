@@ -1,11 +1,16 @@
 package init;
 
+import java.io.*;
+import java.util.prefs.Preferences;
+import org.ini4j.Ini;
+import org.ini4j.InvalidFileFormatException;
+
 public class ConfInfo {
     String confDir; //directory where conf files lie
     String dataDir; //directory where metadata and data lie
     
-    public ConfInfo (String dir) {
-        this.confDir = dir;
+    public ConfInfo () {
+        
     }
     
     public String findDataDir() {
@@ -20,7 +25,17 @@ public class ConfInfo {
     }
     
     public static void main (String[] args) {
-        ConfInfo cInfo = new ConfInfo(args[0]);
+        ConfInfo cInfo = new ConfInfo();
+        try {
+            Ini ini = new Ini(new File("basicConf.ini"));
+            cInfo.confDir = ini.get("Directory").fetch("dir");
+        } catch (InvalidFileFormatException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         
     }
 }

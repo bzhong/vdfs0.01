@@ -33,15 +33,16 @@ public class DataInfo implements Serializable{
         }
         return true;
     }
-    public boolean extractData() {
+    public GlobalFile extractData() {
         ConfInfo cinfo = new ConfInfo("");
         String curDataDir = cinfo.findDataDir();
+        GlobalFile gfile = null;
         if (!curDataDir.endsWith("/"))
             curDataDir = curDataDir + "/";
         try {
             FileInputStream fin = new FileInputStream(curDataDir + "fileobj.txt");
             ObjectInputStream objin = new ObjectInputStream(fin);
-            GlobalFile gfile = (GlobalFile) objin.readObject();
+            gfile = (GlobalFile) objin.readObject();
             objin.close();
             fin.close();
         } catch (ClassNotFoundException e) {
@@ -49,6 +50,6 @@ public class DataInfo implements Serializable{
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return true;
+        return gfile;
     }
 }
