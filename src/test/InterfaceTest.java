@@ -6,6 +6,8 @@ import java.io.*;
 import io.HDFS;
 
 public class InterfaceTest {
+    public InterfaceTest() {}
+    
 	public static void main(String[] args) {
 		System.out.println("Begin Test...");
 		HDFS rf = new HDFS();

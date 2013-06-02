@@ -29,6 +29,7 @@ public class ConfInfo {
         try {
             Ini ini = new Ini(new File("basicConf.ini"));
             cInfo.confDir = ini.get("Directory").fetch("dir");
+            
         } catch (InvalidFileFormatException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
