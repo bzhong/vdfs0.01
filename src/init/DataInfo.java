@@ -34,7 +34,11 @@ public class DataInfo implements Serializable{
         return true;
     }
     public GlobalFile extractData() {
+<<<<<<< HEAD
         ConfInfo cinfo = new ConfInfo();
+=======
+        ConfInfo cinfo = new ConfInfo("");
+>>>>>>> b734a2afe7351f37eb5092f3e58c4fbc98688076
         String curDataDir = cinfo.findDataDir();
         GlobalFile gfile = null;
         if (!curDataDir.endsWith("/"))
