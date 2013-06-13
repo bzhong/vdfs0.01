@@ -13,7 +13,8 @@ public class InterfaceTest {
 		HDFS rf = new HDFS();
 		System.out.println("construction ok");
 		//create, write, read and delete a file
-		String filename = new String("hdfs://localhost:9000/user/hadoop/test");
+		String filename = new String("test");
+		filename = "hdfs://localhost:9000/user/hadoop/" + filename;
 		String content = new String("Hello, world!\n");
 		Path path = new Path(filename);
 		rf.create(path, true);
