@@ -2,8 +2,7 @@ package init;
 
 import java.io.*;
 import java.util.prefs.Preferences;
-import org.ini4j.Ini;
-import org.ini4j.InvalidFileFormatException;
+
 
 public class ConfInfo {
     String confDir; //directory where conf files lie
@@ -24,19 +23,20 @@ public class ConfInfo {
         return targetDir;
     }
     
-    public static void main (String[] args) {
+    public void init (String[] args) {
         ConfInfo cInfo = new ConfInfo();
-        try {
-            Ini ini = new Ini(new File("basicConf.ini"));
-            cInfo.confDir = ini.get("Directory").fetch("dir");
+        //try {
+            //Ini ini = new Ini(new File("basicConf.ini"));
+            //cInfo.confDir = ini.get("Directory").fetch("dir");
             
-        } catch (InvalidFileFormatException e) {
+        /*} catch (InvalidFileFormatException e) {
+            // TODO Auto-generated catch block
+            //e.printStackTrace();
+        } 
+            catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        }*/
         
     }
 }
