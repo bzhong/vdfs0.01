@@ -79,6 +79,7 @@ public class Server {
             serverGns.flushToDisk();
         }
         
+        scanner.close();
         SendMetadata.exit = true;
         
     }

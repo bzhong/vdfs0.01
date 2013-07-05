@@ -20,6 +20,7 @@ public class HBase {
                 hd.addFamily(new HColumnDescriptor(fa));
             }
             ha.createTable(hd);
+            ha.close();
         } catch (MasterNotRunningException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -45,6 +46,7 @@ public class HBase {
             for (Result rr : rs) {
                 sb.append(rr + "\n");
             }
+            ht.close();
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -67,6 +69,7 @@ public class HBase {
             for (Result rr : rs) {
                 sb.append(rr + "\n");
             }
+            ht.close();
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -86,6 +89,7 @@ public class HBase {
             put.add(Bytes.toBytes(familyName), Bytes.toBytes(columnName),
                     Bytes.toBytes(value));
             ht.put(put);
+            ht.close();
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -99,6 +103,7 @@ public class HBase {
         try {
             HBaseAdmin ha = new HBaseAdmin(conf);
             ha.deleteTable(tableName);
+            ha.close();
         } catch (MasterNotRunningException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

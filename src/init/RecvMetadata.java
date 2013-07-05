@@ -21,15 +21,23 @@ public class RecvMetadata implements Runnable {
     
     public void run() {
         try {
-            ServerSocket serverSoc = new ServerSocket(listenPort);
+            serverSoc = new ServerSocket(listenPort);
             while (!exit) {
                 Socket soc = serverSoc.accept();
                 Callable<LinkedHashMap<String, Set<GlobalNamespace>>> callable = new ProcessThread(soc);
                 future = pool.submit(callable);
                 updateFlag = true;
             }
+            
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                serverSoc.close();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
     }
     
@@ -80,5 +88,6 @@ public class RecvMetadata implements Runnable {
     ExecutorService pool;
     Future<LinkedHashMap<String, Set<GlobalNamespace>>> future;
     private boolean updateFlag = false;
+    ServerSocket serverSoc;
 
 }

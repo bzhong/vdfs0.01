@@ -78,6 +78,8 @@ public class Client {
             clntGns.flushToDisk();
         }
         
+        scanner.close();
+        
         SendMetadata.exit = true;
         
     }
