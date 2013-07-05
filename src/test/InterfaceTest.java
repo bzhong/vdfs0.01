@@ -1,8 +1,6 @@
 package test;
 
 import org.apache.hadoop.fs.*;
-import org.apache.hadoop.conf.*;
-import java.io.*;
 import io.HDFS;
 import index.GlobalNamespace;
 
@@ -11,8 +9,7 @@ public class InterfaceTest {
     
 	public static void main(String[] args) {
 	    GlobalNamespace gns = new GlobalNamespace();
-	    
-	    
+	    	    
 		System.out.println("Begin Test...");
 		HDFS rf = new HDFS();
 		System.out.println("construction ok");

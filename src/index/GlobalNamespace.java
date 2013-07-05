@@ -1,20 +1,17 @@
 package index;
 
 import init.MetadataStore;
-
 import java.util.HashSet;
-import java.util.Set;
 
 
 public class GlobalNamespace {
     public GlobalNamespace(){
         //globalns = new HashSet<String>();
-        metafilepath = new String("vdfs.db");
-        globalns = MetadataStore.extractData(metafilepath);
+        globalNS = MetadataStore.extractData(META_FILE_PATH);
     }
     
     public void flushToDisk() {
-        MetadataStore.storeData(globalns, metafilepath);
+        MetadataStore.storeData(globalNS, META_FILE_PATH);
     }
     
     public boolean addPath(String str) {
@@ -23,12 +20,12 @@ public class GlobalNamespace {
             return false;
         }
         else {
-            if (globalns.contains(str)) {
+            if (globalNS.contains(str)) {
                 System.out.println("Error: duplicated file path " + str);
                 return false;
             }
             else {
-                globalns.add(str);
+                globalNS.add(str);
                 return true;
             }
         }
@@ -40,7 +37,7 @@ public class GlobalNamespace {
             return false;
         }
         else {
-            if (globalns.contains(str)) {
+            if (globalNS.contains(str)) {
                 return true;
             }
             else
@@ -54,17 +51,17 @@ public class GlobalNamespace {
             return false;
         }
         else {
-            if (!globalns.contains(str)) {
+            if (!globalNS.contains(str)) {
                 System.out.println("Error: no such file in " + str);
                 return false;
             }
             else {
-                globalns.remove(str);
+                globalNS.remove(str);
                 return true;
             }
         }
     }
     
-    private Set<String> globalns;
-    private String metafilepath;
+    private HashSet<String> globalNS;
+    private String META_FILE_PATH = "vdfs.db";
 }

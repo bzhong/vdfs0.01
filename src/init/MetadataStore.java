@@ -1,7 +1,6 @@
 package init;
 
-import index.GlobalFile;
-
+import index.GlobalNamespace;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -10,77 +9,82 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.io.FileOutputStream;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Set;
 
 public class MetadataStore implements Serializable{
-    public static boolean storeData(Set<String> globalns, String filename) {
+    public static boolean storeData(Set<String> namespace, String filename) {
         try {
-            ObjectOutputStream objout = new ObjectOutputStream(new FileOutputStream(filename));
-            objout.writeObject(globalns);
-            objout.close();
+            ObjectOutputStream out = new ObjectOutputStream(
+                    new FileOutputStream(filename));
+            out.writeObject(namespace);
+            out.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
         return true;
     }
     
-    public static Set<String> extractData(String filename) {
-        Set<String> gns = new HashSet<String>();
+    public static boolean storeGroupMeta(LinkedHashMap<String, 
+            Set<GlobalNamespace>> gnsGroup, String filename) {
+        try {
+            ObjectOutputStream out = new ObjectOutputStream(
+                    new FileOutputStream(filename));
+            out.writeObject(gnsGroup);
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
+    
+    @SuppressWarnings("unchecked")
+    public static HashSet<String> extractData(String filename) {
+        HashSet<String> gns = new HashSet<String>();        
         try {
             File dbFile = new File(filename);
             //if (!dbFile.exists()) {
             dbFile.createNewFile();
             //}
-            ObjectInputStream objin = new ObjectInputStream(new FileInputStream(filename));
-            gns = (HashSet<String>)objin.readObject();
-            objin.close();
+            ObjectInputStream in = new ObjectInputStream(new 
+                    FileInputStream(filename));
+            gns = (HashSet<String>)in.readObject();
+            in.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("no existed db file " + filename);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
         return gns;
     }
     
-    /*public boolean storeData(GlobalFile file) {
-        ConfInfo cinfo = new ConfInfo();
-        
-        String curDataDir = cinfo.findDataDir();
-        if (!curDataDir.endsWith("/"))
-            curDataDir = curDataDir + "/";
+    @SuppressWarnings("unchecked")
+    public static LinkedHashMap<String, 
+            Set<GlobalNamespace>> extractGroupMeta(String filename) {
+        LinkedHashMap<String, Set<GlobalNamespace>> gnsGroup 
+                = new LinkedHashMap<String, Set<GlobalNamespace>>();
         try {
-            FileOutputStream foutstream = 
-                    new FileOutputStream(curDataDir + "fileobj.txt");
-            ObjectOutputStream objout = 
-                    new ObjectOutputStream(foutstream);
-            objout.writeObject(file);
-            objout.close();
-            foutstream.close();
-        } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            File groupDBFile = new File(filename);
+            //if (!dbFile.exists()) {
+            groupDBFile.createNewFile();
+            //}
+            if (groupDBFile.length() != 0) {
+                ObjectInputStream in = new ObjectInputStream(
+                        new FileInputStream(groupDBFile));
+                if (in.readObject() != null) { 
+                    gnsGroup = (LinkedHashMap<String, 
+                            Set<GlobalNamespace>>)in.readObject();
+                }
+                in.close();
+            }
         } catch (IOException e) {
             e.printStackTrace();
-        }
-        return true;
-    }*/
-    /*public GlobalFile extractData() {
-        ConfInfo cinfo = new ConfInfo();
-        String curDataDir = cinfo.findDataDir();
-        GlobalFile gfile = null;
-        if (!curDataDir.endsWith("/"))
-            curDataDir = curDataDir + "/";
-        try {
-            FileInputStream fin = new FileInputStream(curDataDir + "fileobj.txt");
-            ObjectInputStream objin = new ObjectInputStream(fin);
-            gfile = (GlobalFile) objin.readObject();
-            objin.close();
-            fin.close();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
-        return gfile;
-    }*/
+        return gnsGroup;
+    }
+    
+    private static final long serialVersionUID = 1L;
+    
 }
