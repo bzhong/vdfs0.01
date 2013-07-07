@@ -13,8 +13,8 @@ import networkproc.IPAddress;
 
 import org.apache.hadoop.fs.Path;
 
-public class Server {
-    public Server() {
+public class HDFSServer {
+    public HDFSServer() {
         
     }
     
@@ -32,54 +32,64 @@ public class Server {
         System.out.println("construction ok");
         Scanner scanner = new Scanner(System.in);
         String newFile;
+        char operation;
         while (!((newFile = scanner.next()).equals("-1"))) {
-          //create, write, read and delete a file
+            System.out.println("newFile: " + newFile);
+            //create, write, read and delete a file
             String filename = new String(newFile);
             String absfilepath = "hdfs://" + ipAddr + ":9000/user/hadoop/" + filename;
             String content = "Hello, world!";
             Path path = new Path(absfilepath);
             
-            if (serverGns.findPath(filename)) {
-                System.out.println("Error: existed file " + filename);
+            operation = scanner.next().charAt(0);
+            switch (operation) {
+            case 'c'://create
+                if (serverGns.findPath(filename)) {
+                    System.out.println("Error: existed file " + filename);
+                    continue;
+                } 
+                else {          
+                    fileSystem.create(path, true);
+                    serverGns.addPath(filename);
+                    System.out.println("create ok...");
+                }
+                break;
+            case 'w'://write
+                if (!serverGns.findPath(filename)) {
+                    System.out.println("Error: no such file " + filename);
+                    continue;
+                }
+                else {
+                    fileSystem.write(content, path);
+                    System.out.println("write ok...");
+                }
+                break;
+            case 'r'://read
+                if (!serverGns.findPath(filename)) {
+                    System.out.println("Error: no such file " + filename);
+                    continue;
+                }
+                else {
+                    String result = new String(fileSystem.read(path));
+                    System.out.println(result);
+                    System.out.println("read ok...");
+                }
+                break;
+            case 'd'://delete
+                if (!serverGns.findPath(filename)) {
+                System.out.println("Error: no such file " + filename);
                 continue;
             } 
             else {          
-                fileSystem.create(path, true);
-                serverGns.addPath(filename);
-                System.out.println("create ok...");
-            }       
-            
-            if (!serverGns.findPath(filename)) {
-                System.out.println("Error: no such file " + filename);
-                continue;
-            }
-            else {
-                fileSystem.write(content, path);
-                System.out.println("write ok...");
-            }
-            
-            if (!serverGns.findPath(filename)) {
-                System.out.println("Error: no such file " + filename);
-                continue;
-            }
-            else {
-                String result = new String(fileSystem.read(path));
-                System.out.println(result);
-                System.out.println("read ok...");
-            }
-            
-            /*if (!gns.findPath(filename)) {
-                System.out.println("Error: no such file " + filename);
-                continue;
-            } 
-            else {          
-                gns.removePath(filename);
-                rf.delete(path);
+                serverGns.removePath(filename);
+                fileSystem.delete(path);
                 System.out.println("delete ok...");
-            }   */
-            
+            }   
+                break;
+            }          
             serverGns.flushToDisk();
         }
+        
         
         System.out.println("ending the session...");
         scanner.close();
