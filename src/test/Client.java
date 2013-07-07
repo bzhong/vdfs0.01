@@ -17,10 +17,10 @@ public class Client {
     }
     
     public static void  main(String[] args) {
-        GlobalNamespace clntGns = new GlobalNamespace();        
+        GlobalNamespace clntGns = new GlobalNamespace(topDir);        
         String ipAddr = IPAddress.getAddr();
         System.out.println("local IP: " + ipAddr);
-        UploaderMeta uploadMeta = new UploaderMeta(ipAddr);
+        UploaderMeta uploadMeta = new UploaderMeta(topDir, ipAddr);
         uploadMeta.uploadMeta(ipAddr, port, ownerAddr);
         
         System.out.println("Begin Test...");
@@ -78,6 +78,7 @@ public class Client {
             clntGns.flushToDisk();
         }
         
+        System.out.println("ending the session...");
         scanner.close();
         
         SendMetadata.exit = true;
@@ -87,4 +88,5 @@ public class Client {
     //private static String ipAddr = "192.168.5.115";
     private static int port = 3456;
     private static String ownerAddr = "192.168.5.49";
+    private static String topDir = "vdfsClient";
 }

@@ -5,13 +5,14 @@ import java.util.HashSet;
 
 
 public class GlobalNamespace {
-    public GlobalNamespace(){
+    public GlobalNamespace(String tDir){
         //globalns = new HashSet<String>();
-        globalNS = MetadataStore.extractData(META_FILE_PATH);
+        topDir = tDir;
+        globalNS = MetadataStore.extractData(topDir, META_FILE_PATH);
     }
     
     public void flushToDisk() {
-        MetadataStore.storeData(globalNS, META_FILE_PATH);
+        MetadataStore.storeData(globalNS, topDir, META_FILE_PATH);
     }
     
     public boolean addPath(String str) {
@@ -64,4 +65,5 @@ public class GlobalNamespace {
     
     private HashSet<String> globalNS;
     private String META_FILE_PATH = "vdfs.db";
+    private String topDir;
 }

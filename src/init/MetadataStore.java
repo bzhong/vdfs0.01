@@ -13,8 +13,10 @@ import java.util.LinkedHashMap;
 import java.util.Set;
 
 public class MetadataStore implements Serializable{
-    public static boolean storeData(Set<String> namespace, String filename) {
+    public static boolean storeData(Set<String> namespace, String topDir, 
+            String filename) {
         try {
+            filename = topDir + "/" + filename;
             ObjectOutputStream out = new ObjectOutputStream(
                     new FileOutputStream(filename));
             out.writeObject(namespace);
@@ -26,8 +28,9 @@ public class MetadataStore implements Serializable{
     }
     
     public static boolean storeGroupMeta(LinkedHashMap<String, 
-            Set<GlobalNamespace>> gnsGroup, String filename) {
+            Set<GlobalNamespace>> gnsGroup, String topDir, String filename) {
         try {
+            filename = topDir + "/" + filename;
             ObjectOutputStream out = new ObjectOutputStream(
                     new FileOutputStream(filename));
             out.writeObject(gnsGroup);
@@ -39,9 +42,12 @@ public class MetadataStore implements Serializable{
     }
     
     @SuppressWarnings("unchecked")
-    public static HashSet<String> extractData(String filename) {
+    public static HashSet<String> extractData(String topDir, String filename) {
         HashSet<String> gns = new HashSet<String>();        
         try {
+            File dbDir = new File(topDir);
+            dbDir.mkdirs();
+            filename = topDir + "/" + filename;
             File dbFile = new File(filename);
             //if (!dbFile.exists()) {
             dbFile.createNewFile();
@@ -60,10 +66,13 @@ public class MetadataStore implements Serializable{
     
     @SuppressWarnings("unchecked")
     public static LinkedHashMap<String, 
-            Set<GlobalNamespace>> extractGroupMeta(String filename) {
+            Set<GlobalNamespace>> extractGroupMeta(String topDir, String filename) {
         LinkedHashMap<String, Set<GlobalNamespace>> gnsGroup 
                 = new LinkedHashMap<String, Set<GlobalNamespace>>();
         try {
+            File groupDBDir = new File(topDir);
+            groupDBDir.mkdirs();
+            filename = topDir + "/" + filename;
             File groupDBFile = new File(filename);
             //if (!dbFile.exists()) {
             groupDBFile.createNewFile();

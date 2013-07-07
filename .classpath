@@ -2,7 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="F:/workspace/hadoop-core-1.1.2.jar"/>
-	<classpathentry kind="lib" path="F:/workspace/hbase-0.94.6.jar"/>
+	<classpathentry kind="lib" path="/home/brady/hadoop-1.0.4/hadoop-core-1.0.4.jar"/>
+	<classpathentry kind="lib" path="/home/brady/hbase-0.94.6/hbase-0.94.6.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

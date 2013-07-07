@@ -19,10 +19,12 @@ public class Server {
     }
     
     public static void  main(String[] args) {
-        GlobalNamespace serverGns = new GlobalNamespace();
+        GlobalNamespace serverGns = new GlobalNamespace(topDir);
         String ipAddr = IPAddress.getAddr();
-        UploaderMeta uploadMeta = new UploaderMeta(ipAddr);
-        LinkedHashMap<String, Set<GlobalNamespace>> gGNS = uploadMeta.recvMeta(ipAddr, port);
+        System.out.println("local IP: " + ipAddr);
+        UploaderMeta uploadMeta = new UploaderMeta(topDir, ipAddr);
+        LinkedHashMap<String, Set<GlobalNamespace>> gGNS 
+                = uploadMeta.recvMeta(ipAddr, port);
         uploadMeta.updateGns(gGNS);
                 
         System.out.println("Begin Test...");
@@ -30,7 +32,7 @@ public class Server {
         System.out.println("construction ok");
         Scanner scanner = new Scanner(System.in);
         String newFile;
-        while ((newFile = scanner.next()) != "-1") {
+        while (!((newFile = scanner.next()).equals("-1"))) {
           //create, write, read and delete a file
             String filename = new String(newFile);
             String absfilepath = "hdfs://" + ipAddr + ":9000/user/hadoop/" + filename;
@@ -39,7 +41,7 @@ public class Server {
             
             if (serverGns.findPath(filename)) {
                 System.out.println("Error: existed file " + filename);
-                return;
+                continue;
             } 
             else {          
                 fileSystem.create(path, true);
@@ -49,7 +51,7 @@ public class Server {
             
             if (!serverGns.findPath(filename)) {
                 System.out.println("Error: no such file " + filename);
-                return;
+                continue;
             }
             else {
                 fileSystem.write(content, path);
@@ -58,7 +60,7 @@ public class Server {
             
             if (!serverGns.findPath(filename)) {
                 System.out.println("Error: no such file " + filename);
-                return;
+                continue;
             }
             else {
                 String result = new String(fileSystem.read(path));
@@ -68,7 +70,7 @@ public class Server {
             
             /*if (!gns.findPath(filename)) {
                 System.out.println("Error: no such file " + filename);
-                return;
+                continue;
             } 
             else {          
                 gns.removePath(filename);
@@ -79,6 +81,7 @@ public class Server {
             serverGns.flushToDisk();
         }
         
+        System.out.println("ending the session...");
         scanner.close();
         SendMetadata.exit = true;
         
@@ -87,4 +90,5 @@ public class Server {
     
     //private static String ipAddr = "192.168.5.49";
     private static int port = 3456;
+    private static String topDir = "vdfsServer";
 }

@@ -8,7 +8,7 @@ public class InterfaceTest {
     public InterfaceTest() {}
     
 	public static void main(String[] args) {
-	    GlobalNamespace gns = new GlobalNamespace();
+	    GlobalNamespace gns = new GlobalNamespace(topDir);
 	    	    
 		System.out.println("Begin Test...");
 		HDFS rf = new HDFS();
@@ -62,4 +62,6 @@ public class InterfaceTest {
 		
 		return;
 	}
+	
+	private static String topDir = "vdfsTest";
 }

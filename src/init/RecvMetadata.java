@@ -23,8 +23,11 @@ public class RecvMetadata implements Runnable {
         try {
             serverSoc = new ServerSocket(listenPort);
             while (!exit) {
+                System.out.println("Waiting a new connection...");
                 Socket soc = serverSoc.accept();
+                System.out.println("connection begin...");
                 Callable<LinkedHashMap<String, Set<GlobalNamespace>>> callable = new ProcessThread(soc);
+                System.out.println("Connection established...");
                 future = pool.submit(callable);
                 updateFlag = true;
             }
@@ -47,7 +50,11 @@ public class RecvMetadata implements Runnable {
     
     public LinkedHashMap<String, Set<GlobalNamespace>> getGGroup() {
         try {
-            return (LinkedHashMap<String, Set<GlobalNamespace>>)future.get();
+            if (updateFlag) {
+                return (LinkedHashMap<String, Set<GlobalNamespace>>)future.get();
+            }
+            else
+                return null;
         } catch (InterruptedException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

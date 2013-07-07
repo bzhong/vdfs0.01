@@ -15,16 +15,17 @@ public class IPAddress {
             else {
                 while (ifceList.hasMoreElements()) {
                     NetworkInterface ifce = ifceList.nextElement(); 
-                    if (ifce.getName().equals("eth0")) {                    
+                    //if (ifce.getName().equals("eth0")) {                    
                         Enumeration<InetAddress> addrList = ifce.getInetAddresses();
                         while (addrList.hasMoreElements()) {
                             InetAddress address = addrList.nextElement();
-                            if (address.getHostAddress().indexOf(":") == -1) {
+                            if (address.getHostAddress().indexOf(":") == -1 &&
+                                    !address.getHostAddress().equals("127.0.0.1")) {
                             System.out.println(address.getHostAddress());
                             return address.getHostAddress();
                             }
                         }
-                    }
+                    //}
                 }
             }
         } catch (SocketException e) {
