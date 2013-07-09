@@ -1,10 +1,12 @@
 package index;
 
 import init.MetadataStore;
+
+import java.io.Serializable;
 import java.util.HashSet;
 
 
-public class GlobalNamespace {
+public class GlobalNamespace implements Serializable {
     public GlobalNamespace(String tDir){
         //globalns = new HashSet<String>();
         topDir = tDir;
@@ -13,6 +15,10 @@ public class GlobalNamespace {
     
     public void flushToDisk() {
         MetadataStore.storeData(globalNS, topDir, META_FILE_PATH);
+    }
+    
+    public HashSet<String> getGNS() {
+        return globalNS;
     }
     
     public boolean addPath(String str) {
@@ -66,4 +72,5 @@ public class GlobalNamespace {
     private HashSet<String> globalNS;
     private String META_FILE_PATH = "vdfs.db";
     private String topDir;
+    private static final long serialVersionUID = 1L;
 }

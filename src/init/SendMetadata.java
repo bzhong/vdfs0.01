@@ -2,31 +2,38 @@ package init;
 
 import index.GlobalNamespace;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.LinkedHashMap;
-import java.util.Set;
+import test.DebugTool;
 
 public class SendMetadata implements Runnable {
-    public SendMetadata(String serveraddr, int p, String ownerip){
-        serverAddress = serveraddr;
+    public SendMetadata(String serveraddr, int p, String ownership, 
+            LinkedHashMap<String, GlobalNamespace> gnsGroup, GlobalNamespace gns){
+        serverAddress = ownership;
         port = p;
         startTime = 0;
         endTime = 0;
+        gnsG = gnsGroup;
+        localAddr = serveraddr;
+        localGns = gns;
     }
     
-    public boolean getGroupGns(LinkedHashMap<String, Set<GlobalNamespace>> gnsgroup) {
+    /*public boolean getGroupGns(LinkedHashMap<String, GlobalNamespace> gnsgroup) {
+        gnsG = gnsgroup;
+        return true;
+    }*/
+    
+    public boolean setGroupGns(LinkedHashMap<String, GlobalNamespace> gnsgroup) {
         gnsG = gnsgroup;
         return true;
     }
     
     public boolean timePeriod (long start, long end) {
         //upload vdfs.db to upper data center about every 60s
-        if ((end - start) >> 16 > 0) {
+        if ((end - start) >> 14 > 0) {
             return true;
         }
         else {
@@ -40,22 +47,35 @@ public class SendMetadata implements Runnable {
             Socket soc = new Socket(serverAddress, port);
             
             System.out.println("socket built...");
-            in = new BufferedReader(new InputStreamReader(soc.getInputStream()));
+           // in = new BufferedReader(new InputStreamReader(soc.getInputStream()));
             out = new ObjectOutputStream(soc.getOutputStream());
             startTime = System.currentTimeMillis();
-            
+            System.out.println("begin loop...");
+            long count = 0;
             while (!exit) {
                 endTime = System.currentTimeMillis();
                 if (timePeriod(startTime, endTime)) {
-                      out.writeObject(gnsG);
-                      out.flush();
-                      break;
+                    System.out.println("time up: " +  String.valueOf((endTime - startTime) / 1000));
+                    if (gnsG.containsKey(localAddr)) {
+                        gnsG.remove(localAddr);
+                    }
+                    gnsG.put(localAddr, localGns);
+                    out.writeObject(gnsG);
+                    out.flush();
+                    out.reset();
+                    
+                    count++;
+                    DebugTool.PrintGgns("client send" + String.valueOf(count), gnsG);
+                    
+                    System.out.println("client upload over...");
+                    startTime = System.currentTimeMillis();
+                    //break;
                 }
-                startTime = System.currentTimeMillis();
+
             }
             
             out.close();
-            in.close();
+            //in.close();
             soc.close();
         } catch (UnknownHostException e) {
             e.printStackTrace();
@@ -65,11 +85,12 @@ public class SendMetadata implements Runnable {
     }
     
     private String serverAddress;
+    private String localAddr;
     private int port;
-    private BufferedReader in;
     private ObjectOutputStream out;
     public static volatile boolean exit = false;
     private long startTime;
     private long endTime;
-    private LinkedHashMap<String, Set<GlobalNamespace>> gnsG;
+    private GlobalNamespace localGns;
+    private LinkedHashMap<String, GlobalNamespace> gnsG;
 }

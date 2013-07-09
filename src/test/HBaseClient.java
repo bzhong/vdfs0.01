@@ -21,7 +21,7 @@ public class HBaseClient {
         String ipAddr = IPAddress.getAddr();
         System.out.println("local IP: " + ipAddr);
         UploaderMeta uploadMeta = new UploaderMeta(topDir, ipAddr);
-        uploadMeta.uploadMeta(ipAddr, port, ownerAddr);
+        uploadMeta.uploadMeta(ipAddr, port, ownerAddr, clntGns);
         
         System.out.println("Begin Test...");
         HDFS fileSystem = new HDFS();

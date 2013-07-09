@@ -5,18 +5,21 @@ import java.io.ObjectInputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.LinkedHashMap;
+import java.util.List;
 import index.GlobalNamespace;
-import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
+import index.UploaderMeta;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import test.DebugTool;
+
 public class RecvMetadata implements Runnable {
-    public RecvMetadata(String serveraddr, int p){
+    public RecvMetadata(String serveraddr, int p, UploaderMeta uploaderMeta){
         listenPort = p;
-        pool = Executors.newFixedThreadPool(2);
+        pool = Executors.newCachedThreadPool();
+        upMeta = uploaderMeta;
     }
     
     public void run() {
@@ -26,10 +29,14 @@ public class RecvMetadata implements Runnable {
                 System.out.println("Waiting a new connection...");
                 Socket soc = serverSoc.accept();
                 System.out.println("connection begin...");
-                Callable<LinkedHashMap<String, Set<GlobalNamespace>>> callable = new ProcessThread(soc);
+                Thread thread = new Thread(new ProcessThread(soc));
+                thread.setDaemon(true);
+                thread.start();
+                //Callable<LinkedHashMap<String, GlobalNamespace>> callable = new ProcessThread(soc);
                 System.out.println("Connection established...");
-                future = pool.submit(callable);
-                updateFlag = true;
+                //results.add(pool.submit(callable));
+                //future = pool.submit(callable);
+                //updateFlag = true;                
             }
             
         } catch (IOException e) {
@@ -48,10 +55,10 @@ public class RecvMetadata implements Runnable {
         return updateFlag;
     }
     
-    public LinkedHashMap<String, Set<GlobalNamespace>> getGGroup() {
+    /*public LinkedHashMap<String, GlobalNamespace> getGGroup() {
         try {
             if (updateFlag) {
-                return (LinkedHashMap<String, Set<GlobalNamespace>>)future.get();
+                return (LinkedHashMap<String, GlobalNamespace>)future.get();
             }
             else
                 return null;
@@ -63,27 +70,37 @@ public class RecvMetadata implements Runnable {
             e.printStackTrace();
         }
         return null;
-    }
+    }*/
     
-    private class ProcessThread implements Callable<LinkedHashMap<String, Set<GlobalNamespace>>> {
+    private class ProcessThread implements Runnable {
         ProcessThread(Socket soc) {
             procSoc = soc;                     
         }
         
-        public LinkedHashMap<String, Set<GlobalNamespace>> call() {
+        @SuppressWarnings("unchecked")
+        public void run() {
             try {
                 ObjectInputStream in = new ObjectInputStream(procSoc.getInputStream());
-                @SuppressWarnings("unchecked")
-                LinkedHashMap<String, Set<GlobalNamespace>> groupGns 
-                        = (LinkedHashMap<String, Set<GlobalNamespace>>)in.readObject();
-                return groupGns;
+                LinkedHashMap<String, GlobalNamespace> groupGns; 
+                //        = (LinkedHashMap<String, GlobalNamespace>)in.readObject();
+                long count = 0;
+                
+                while ((groupGns = (LinkedHashMap<String, GlobalNamespace>)in.readObject()) != null) {
+                    //groupGns = (LinkedHashMap<String, GlobalNamespace>)groupGns;
+                    count++;
+                    DebugTool.PrintGgns("server recv " + String.valueOf(count), groupGns);
+                   
+                    upMeta.setGroupgns(groupGns);
+                }
+                                              
+                //return groupGns;
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (ClassNotFoundException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-            return null;
+            //return null;
             
         }
         
@@ -93,7 +110,8 @@ public class RecvMetadata implements Runnable {
     private int listenPort;
     public static volatile boolean exit = false;
     ExecutorService pool;
-    Future<LinkedHashMap<String, Set<GlobalNamespace>>> future;
+    UploaderMeta upMeta;
+    List<Future<LinkedHashMap<String, GlobalNamespace>>> results;
     private boolean updateFlag = false;
     ServerSocket serverSoc;
 

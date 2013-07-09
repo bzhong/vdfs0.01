@@ -11,6 +11,7 @@ import java.io.FileOutputStream;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Set;
+import test.DebugTool;
 
 public class MetadataStore implements Serializable{
     public static boolean storeData(Set<String> namespace, String topDir, 
@@ -20,6 +21,7 @@ public class MetadataStore implements Serializable{
             ObjectOutputStream out = new ObjectOutputStream(
                     new FileOutputStream(filename));
             out.writeObject(namespace);
+            out.flush();
             out.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -28,12 +30,14 @@ public class MetadataStore implements Serializable{
     }
     
     public static boolean storeGroupMeta(LinkedHashMap<String, 
-            Set<GlobalNamespace>> gnsGroup, String topDir, String filename) {
+            GlobalNamespace> gnsGroup, String topDir, String filename) {
         try {
             filename = topDir + "/" + filename;
             ObjectOutputStream out = new ObjectOutputStream(
                     new FileOutputStream(filename));
             out.writeObject(gnsGroup);
+            out.flush();
+            DebugTool.PrintGgns("store", gnsGroup);
             out.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -66,9 +70,9 @@ public class MetadataStore implements Serializable{
     
     @SuppressWarnings("unchecked")
     public static LinkedHashMap<String, 
-            Set<GlobalNamespace>> extractGroupMeta(String topDir, String filename) {
-        LinkedHashMap<String, Set<GlobalNamespace>> gnsGroup 
-                = new LinkedHashMap<String, Set<GlobalNamespace>>();
+            GlobalNamespace> extractGroupMeta(String topDir, String filename) {
+        LinkedHashMap<String, GlobalNamespace> gnsGroup 
+                = new LinkedHashMap<String, GlobalNamespace>();
         try {
             File groupDBDir = new File(topDir);
             groupDBDir.mkdirs();
@@ -78,12 +82,13 @@ public class MetadataStore implements Serializable{
             groupDBFile.createNewFile();
             //}
             if (groupDBFile.length() != 0) {
+                
                 ObjectInputStream in = new ObjectInputStream(
                         new FileInputStream(groupDBFile));
-                if (in.readObject() != null) { 
+               // if (in.readObject() != null) { 
                     gnsGroup = (LinkedHashMap<String, 
-                            Set<GlobalNamespace>>)in.readObject();
-                }
+                            GlobalNamespace>)in.readObject();
+                //}
                 in.close();
             }
         } catch (IOException e) {
@@ -91,6 +96,9 @@ public class MetadataStore implements Serializable{
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
+        
+        DebugTool.PrintGgns("extract", gnsGroup);
+
         return gnsGroup;
     }
     
