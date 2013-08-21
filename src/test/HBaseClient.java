@@ -20,7 +20,7 @@ public class HBaseClient {
         GlobalNamespace clntGns = new GlobalNamespace(topDir);        
         String ipAddr = IPAddress.getAddr();
         System.out.println("local IP: " + ipAddr);
-        UploaderMeta uploadMeta = new UploaderMeta(topDir, ipAddr);
+        UploaderMeta uploadMeta = new UploaderMeta(topDir, ipAddr, HBaseClient.numOfNodes);
         uploadMeta.uploadMeta(ipAddr, port, ownerAddr, clntGns);
         
         System.out.println("Begin Test...");
@@ -89,4 +89,5 @@ public class HBaseClient {
     private static int port = 3456;
     private static String ownerAddr = "192.168.5.49";
     private static String topDir = "vdfsClient";
+    private static int numOfNodes;
 }

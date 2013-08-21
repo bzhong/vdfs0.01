@@ -13,6 +13,10 @@ public class GlobalNamespace implements Serializable {
         globalNS = MetadataStore.extractData(topDir, META_FILE_PATH);
     }
     
+    public GlobalNamespace(HashSet<String> gns) {
+        globalNS = gns;
+    }
+    
     public void flushToDisk() {
         MetadataStore.storeData(globalNS, topDir, META_FILE_PATH);
     }

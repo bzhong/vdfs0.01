@@ -3,6 +3,8 @@ package io;
 import org.apache.hadoop.fs.*;
 import org.apache.hadoop.conf.*;
 
+import test.HDFSClient;
+
 import index.GlobalNamespace;
 import index.UploaderMeta;
 
@@ -10,6 +12,7 @@ import java.io.*;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Random;
 
 
 public class HDFS {
@@ -113,6 +116,22 @@ public class HDFS {
         }
         return true;
     }
+    
+    public boolean genMoreFiles(HDFSClient hdfsClient) {
+        Random rand = new Random();
+        int randNum = rand.nextInt(1000000);
+        String absfilepath = "hdfs://" + hdfsClient.ipAddr
+                + ":9000/user/hadoop/" + String.valueOf(randNum) + "_";
+        for (int count = 0; count < MaxNumOfFile; count++) {
+            String filename = absfilepath + String.valueOf(count);
+            Path path = new Path(filename);
+            create(path, true);
+            hdfsClient.clntGns.addPath(filename);
+            System.out.println("create ok...");
+        }
+        
+        return true;
+    }
 
     //private FileSystem fs;
 
@@ -123,4 +142,6 @@ public class HDFS {
     System.out.print(myString);
     System.out.print("");
   }*/
+    
+    private final int MaxNumOfFile = 1000000;
 }

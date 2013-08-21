@@ -53,7 +53,7 @@ public class HDFSServer {
         hdfsServer.serverGns = new GlobalNamespace(topDir);
         String ipAddr = IPAddress.getAddr();
         System.out.println("local IP: " + ipAddr);
-        hdfsServer.uploaderMeta = new UploaderMeta(topDir, hdfsServer.ipAddr);
+        hdfsServer.uploaderMeta = new UploaderMeta(topDir, hdfsServer.ipAddr, HDFSServer.numOfNodes);
         Thread updateThread = new Thread(hdfsServer.new UpdateGroupGns());
         updateThread.setDaemon(true);
         updateThread.start();
@@ -63,12 +63,12 @@ public class HDFSServer {
 
         System.out.println("Begin Test...");
         HDFS fileSystem = new HDFS();
-        System.out.println("construction ok");
+        //System.out.println("construction ok");
         Scanner scanner = new Scanner(System.in);
         String newFile;
         char operation;
         while (!((newFile = scanner.next()).equals("-1"))) {
-            System.out.println("newFile: " + newFile);
+            //System.out.println("newFile: " + newFile);
 
             if (newFile.equals("ls")) {
                 fileSystem.displayNS(hdfsServer.serverGns);
@@ -145,4 +145,5 @@ public class HDFSServer {
     private static String topDir = "vdfsServer";
     private GlobalNamespace serverGns;
     private UploaderMeta uploaderMeta;
+    private static int numOfNodes;
 }

@@ -1,10 +1,12 @@
 package init;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.LinkedHashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.List;
 import index.GlobalNamespace;
 import index.UploaderMeta;
@@ -28,11 +30,11 @@ public class RecvMetadata implements Runnable {
             while (!exit) {
                 System.out.println("Waiting a new connection...");
                 Socket soc = serverSoc.accept();
-                System.out.println("connection begin...");
+                //System.out.println("connection begin...");
                 Thread thread = new Thread(new ProcessThread(soc));
                 thread.setDaemon(true);
                 thread.start();
-                //Callable<LinkedHashMap<String, GlobalNamespace>> callable = new ProcessThread(soc);
+                //Callable<ConcurrentHashMap<String, GlobalNamespace>> callable = new ProcessThread(soc);
                 System.out.println("Connection established...");
                 //results.add(pool.submit(callable));
                 //future = pool.submit(callable);
@@ -55,10 +57,10 @@ public class RecvMetadata implements Runnable {
         return updateFlag;
     }
     
-    /*public LinkedHashMap<String, GlobalNamespace> getGGroup() {
+    /*public ConcurrentHashMap<String, GlobalNamespace> getGGroup() {
         try {
             if (updateFlag) {
-                return (LinkedHashMap<String, GlobalNamespace>)future.get();
+                return (ConcurrentHashMap<String, GlobalNamespace>)future.get();
             }
             else
                 return null;
@@ -80,22 +82,29 @@ public class RecvMetadata implements Runnable {
         @SuppressWarnings("unchecked")
         public void run() {
             try {
+                DataOutputStream out = new DataOutputStream(procSoc.getOutputStream());
                 ObjectInputStream in = new ObjectInputStream(procSoc.getInputStream());
-                LinkedHashMap<String, GlobalNamespace> groupGns; 
-                //        = (LinkedHashMap<String, GlobalNamespace>)in.readObject();
-                long count = 0;
+                ConcurrentHashMap<String, GlobalNamespace> groupGns; 
+                //        = (ConcurrentHashMap<String, GlobalNamespace>)in.readObject();
+                int count = 0;
                 
-                while ((groupGns = (LinkedHashMap<String, GlobalNamespace>)in.readObject()) != null) {
-                    //groupGns = (LinkedHashMap<String, GlobalNamespace>)groupGns;
-                    count++;
-                    DebugTool.PrintGgns("server recv " + String.valueOf(count), groupGns);
-                   
-                    upMeta.setGroupgns(groupGns);
+                while ((groupGns = (ConcurrentHashMap<String, GlobalNamespace>)in.readObject()) != null) {
+                    //groupGns = (ConcurrentHashMap<String, GlobalNamespace>)groupGns;
+                    //count++;
+                    //System.out.println("Count = " + count);
+                    //DebugTool.PrintGgns("server recv " + String.valueOf(count), groupGns);                  
+                    
+                    //System.out.println("newKey: " + newKey);
+                    out.writeInt((count++) % UploaderMeta.packetAllowedNum);
+                    out.flush();                            
+                    //groupGns.remove(newKey);
+                                      
+                    upMeta.updateGns(groupGns);
                 }
                                               
                 //return groupGns;
             } catch (IOException e) {
-                e.printStackTrace();
+                System.out.println("one socket broken...");
             } catch (ClassNotFoundException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -111,7 +120,7 @@ public class RecvMetadata implements Runnable {
     public static volatile boolean exit = false;
     ExecutorService pool;
     UploaderMeta upMeta;
-    List<Future<LinkedHashMap<String, GlobalNamespace>>> results;
+    List<Future<ConcurrentHashMap<String, GlobalNamespace>>> results;
     private boolean updateFlag = false;
     ServerSocket serverSoc;
 

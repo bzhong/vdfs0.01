@@ -21,7 +21,7 @@ public class IPAddress {
                             InetAddress address = addrList.nextElement();
                             if (address.getHostAddress().indexOf(":") == -1 &&
                                     !address.getHostAddress().equals("127.0.0.1")) {
-                            System.out.println(address.getHostAddress());
+                            //System.out.println(address.getHostAddress());
                             return address.getHostAddress();
                             }
                         }

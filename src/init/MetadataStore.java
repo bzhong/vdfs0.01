@@ -9,7 +9,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.io.FileOutputStream;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.Set;
 import test.DebugTool;
 
@@ -29,7 +29,7 @@ public class MetadataStore implements Serializable{
         return true;
     }
     
-    public static boolean storeGroupMeta(LinkedHashMap<String, 
+    public static boolean storeGroupMeta(ConcurrentHashMap<String, 
             GlobalNamespace> gnsGroup, String topDir, String filename) {
         try {
             filename = topDir + "/" + filename;
@@ -37,7 +37,7 @@ public class MetadataStore implements Serializable{
                     new FileOutputStream(filename));
             out.writeObject(gnsGroup);
             out.flush();
-            DebugTool.PrintGgns("store", gnsGroup);
+            //DebugTool.PrintGgns("store", gnsGroup);
             out.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -69,10 +69,10 @@ public class MetadataStore implements Serializable{
     }
     
     @SuppressWarnings("unchecked")
-    public static LinkedHashMap<String, 
+    public static ConcurrentHashMap<String, 
             GlobalNamespace> extractGroupMeta(String topDir, String filename) {
-        LinkedHashMap<String, GlobalNamespace> gnsGroup 
-                = new LinkedHashMap<String, GlobalNamespace>();
+        ConcurrentHashMap<String, GlobalNamespace> gnsGroup 
+                = new ConcurrentHashMap<String, GlobalNamespace>();
         try {
             File groupDBDir = new File(topDir);
             groupDBDir.mkdirs();
@@ -86,7 +86,7 @@ public class MetadataStore implements Serializable{
                 ObjectInputStream in = new ObjectInputStream(
                         new FileInputStream(groupDBFile));
                // if (in.readObject() != null) { 
-                    gnsGroup = (LinkedHashMap<String, 
+                    gnsGroup = (ConcurrentHashMap<String, 
                             GlobalNamespace>)in.readObject();
                 //}
                 in.close();
@@ -97,7 +97,7 @@ public class MetadataStore implements Serializable{
             e.printStackTrace();
         }
         
-        DebugTool.PrintGgns("extract", gnsGroup);
+        //DebugTool.PrintGgns("extract", gnsGroup);
 
         return gnsGroup;
     }

@@ -1,14 +1,14 @@
 package test;
 
 import java.util.Iterator;
-import java.util.LinkedHashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import index.GlobalNamespace;
 
 public class DebugTool {
-    public static void PrintGgns(String operation, LinkedHashMap<String, GlobalNamespace> ggns) {
+    public static void PrintGgns(String operation, ConcurrentHashMap<String, GlobalNamespace> ggns) {
         System.out.println(operation + " ok...");
         System.out.println("show ggns: ");
         Iterator<Entry<String, GlobalNamespace>> iter = ggns.entrySet().iterator();
