@@ -4,6 +4,12 @@ import index.GlobalNamespace;
 import index.UploaderMeta;
 import io.HDFS;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Scanner;
 import networkproc.IPAddress;
 
@@ -20,12 +26,12 @@ public class HDFSServer {
             while (!exit) {
                 endTime = System.currentTimeMillis();
                 if (timePeriod(startTime, endTime)) {
-                    System.out.println("time up: "
-                            + String.valueOf((endTime - startTime) / 1000));
+                //    System.out.println("time up: "
+                //            + String.valueOf((endTime - startTime) / 1000));
                     uploaderMeta.addGnsToGroupgns(serverGns);
                     // uploaderMeta.uploadMeta(ipAddr, port, ownerAddr,
                     // clntGns);
-                    System.out.println("update over...");
+                //    System.out.println("update over...");
                     startTime = System.currentTimeMillis();
                     // break;
 
@@ -48,7 +54,7 @@ public class HDFSServer {
         public static final boolean exit = false;
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         HDFSServer hdfsServer = new HDFSServer();
         hdfsServer.serverGns = new GlobalNamespace(topDir);
         String ipAddr = IPAddress.getAddr();
@@ -100,23 +106,30 @@ public class HDFSServer {
                 }
                 break;
             case 'w':// write
+                String src = scanner.next();
+                BufferedReader bufRead = new BufferedReader(new InputStreamReader(new FileInputStream(new File(src))));                
                 if (!hdfsServer.serverGns.findPath(filename)) {
                     System.out.println("Error: no such file " + filename);
                     continue;
                 } else {
-                    fileSystem.write(content, path);
+                    fileSystem.write(bufRead, path);
                     System.out.println("write ok...");
                 }
+                bufRead.close();
                 break;
             case 'r':// read
+                long stime, etime;
+                stime = System.currentTimeMillis();
                 if (!hdfsServer.serverGns.findPath(filename)) {
                     System.out.println("Error: no such file " + filename);
                     continue;
                 } else {
                     String result = new String(fileSystem.read(path));
-                    System.out.println(result);
+                    //System.out.println(result);
                     System.out.println("read ok...");
                 }
+                etime = System.currentTimeMillis();
+                System.out.println(String.valueOf((double)(etime - stime) / 1000));
                 break;
             case 'd':// delete
                 if (!hdfsServer.serverGns.findPath(filename)) {

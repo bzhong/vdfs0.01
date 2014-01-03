@@ -1,5 +1,7 @@
 package test;
 
+import java.io.BufferedReader;
+
 import org.apache.hadoop.fs.*;
 import io.HDFS;
 import index.GlobalNamespace;
@@ -34,7 +36,9 @@ public class InterfaceTest {
 		    return;
 		}
 		else {
-		    rf.write(content, path);
+		    
+		    BufferedReader bufRead = null;
+            rf.write(bufRead, path);
 		    System.out.println("write ok...");
 		}
 		

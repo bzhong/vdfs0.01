@@ -68,14 +68,18 @@ public class HDFS {
         return desc;
     }
 
-    public void write(String str, Path outFile) {
+    public void write(BufferedReader bufRead, Path outFile) {
         try {
             FileSystem fs = FileSystem.get(new Configuration());
             FSDataOutputStream out = fs.append(outFile);
-            System.out.println("FSDataOutputStream create ok...");
+            //System.out.println("FSDataOutputStream create ok...");
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(out));
-            System.out.println("create buffer succeed...");
-            bw.write(str);
+            //System.out.println("create buffer succeed...");
+            String line;
+            while ((line = bufRead.readLine()) != null) {
+                bw.write(line);
+            }
+            //bw.write(str);
             bw.close();
             out.close();
             fs.close();

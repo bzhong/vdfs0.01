@@ -5,6 +5,7 @@ import index.UploaderMeta;
 import init.SendMetadata;
 import io.HDFS;
 
+import java.io.BufferedReader;
 import java.util.Scanner;
 
 import networkproc.IPAddress;
@@ -51,7 +52,8 @@ public class HBaseClient {
                 continue;
             }
             else {
-                fileSystem.write(content, path);
+                BufferedReader bufRead = null;
+                fileSystem.write(bufRead, path);
                 System.out.println("write ok...");
             }
             

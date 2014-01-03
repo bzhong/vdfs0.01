@@ -1,11 +1,18 @@
 package test;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStreamReader;
 import java.util.Random;
 import java.util.Scanner;
 
 import networkproc.IPAddress;
 
 import org.apache.hadoop.fs.Path;
+
+import authorization.AuthorizationList;
 
 import index.GlobalNamespace;
 import index.UploaderMeta;
@@ -63,7 +70,7 @@ public class HDFSClient {
         return str.toString();
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws FileNotFoundException {
         HDFSClient hdfsClient = new HDFSClient();
         hdfsClient.clntGns = new GlobalNamespace(topDir);
         hdfsClient.ipAddr = IPAddress.getAddr();
@@ -74,6 +81,8 @@ public class HDFSClient {
         Thread updateThread = new Thread(hdfsClient.new UpdateGroupGns());
         updateThread.setDaemon(true);
         updateThread.start();
+        
+        AuthorizationList authC = new AuthorizationList();
         
         hdfsClient.uploaderMeta.recvMeta(hdfsClient.ipAddr, port);
         for (int num = 0; num < HDFSClient.numOfNodes; num++) {
@@ -151,6 +160,7 @@ public class HDFSClient {
             }
             else if (newFile.equals("normal")) {
              // create, write, read and delete a file
+                newFile = scanner.next();
                 filename = new String(newFile);
                 String absfilepath = "hdfs://" + hdfsClient.ipAddr
                         + ":9000/user/hadoop/" + filename;
@@ -170,11 +180,13 @@ public class HDFSClient {
                     }
                     break;
                 case 'w':// write
+                    String src = scanner.next();
+                    BufferedReader bufRead = new BufferedReader(new InputStreamReader(new FileInputStream(new File(src))));
                     if (!hdfsClient.clntGns.findPath(filename)) {
                         System.out.println("Error: no such file " + filename);
                         continue;
                     } else {
-                        fileSystem.write(content, path);
+                        fileSystem.write(bufRead, path);
                         System.out.println("write ok...");
                     }
                     break;
